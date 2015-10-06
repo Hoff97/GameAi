@@ -1,0 +1,9 @@
+#!/bin/bash
+
+test=$(pwd)
+
+echo "Opening Atom"
+cabal exec atom $test
+
+echo "Opening Terminal with binaries"
+cabal exec bash
