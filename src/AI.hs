@@ -2,7 +2,9 @@ module AI where
 
 import           Control.Applicative ((<$>))
 import           Data.Functor.Sum
+import           Data.List           (minimumBy)
 import           Data.Monoid
+import           Data.Ord            (comparing)
 import           Evolve
 import           Four
 import           Game
@@ -56,15 +58,15 @@ instance Evolve FourNeural where
             conv r (Sum i) = (r,fromInteger i)
             combine (Nothing,Nothing) _ = Sum 0
             combine (Just a, Just b) c
-                | a==b      = Sum 0
-                | a == P1   = if c then Sum 100 else Sum (-100)
-                | otherwise = if c then Sum (-100) else Sum 100
+                | a==b      = Sum 100
+                | a == P1   = if c then Sum 200 else Sum 0
+                | otherwise = if c then Sum 0 else Sum 200
             combine (Nothing, Just a) b
-                | a==P1     = if b then Sum (-50) else Sum 50
-                | otherwise = if b then Sum 50 else Sum (-50)
+                | a==P1     = if b then Sum 50 else Sum 150
+                | otherwise = if b then Sum 150 else Sum 50
             combine (Just a, Nothing) b
-                | a==P1     = if b then Sum 50 else Sum (-50)
-                | otherwise = if b then Sum (-50) else Sum 50
+                | a==P1     = if b then Sum 150 else Sum 50
+                | otherwise = if b then Sum 50 else Sum 150
     mutate (FP x) = do
         mutated <- mapM mutateMatr x
         return $ FP mutated

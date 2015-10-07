@@ -96,7 +96,7 @@ computeH :: NN -> FW -> Double
 computeH n = head . toVect . evalNN Linear n . toNNInput
 
 computeMove :: NN -> FWR -> FWR
-computeMove n f = alphaBeta 3 (computeH n . get) f!!1
+computeMove n f = alphaBeta 2 (computeH n . get) f!!1
     where
         get (FWR a) = a
 
