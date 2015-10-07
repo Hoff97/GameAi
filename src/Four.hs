@@ -19,6 +19,9 @@ newtype FWR = FWR FW
 instance Game FWR where
     next p (FWR a) = map FWR $ possibleMoves p a
 
+get :: FWR -> FW
+get (FWR r) = r
+
 start :: FW
 start = replicate 6 $ 7 `replicate` Empty
 
