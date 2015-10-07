@@ -10,7 +10,7 @@ import           Neural
 import           Rand
 import           Util                (randomNN)
 
-newtype FourNeural = FP NN
+newtype FourNeural = FP NN deriving Show
 
 getN :: FourNeural -> NN
 getN (FP r) = r
@@ -31,6 +31,7 @@ matchAll (x:xs) = zipWith comb xs [1..] ++ map rest (matchAll xs)
         rest (a,b,i,j) = (a,b,i+1,j+1)
 
 filterWith :: (a -> Maybe b) -> [a] -> [b]
+filterWith _ [] = []
 filterWith f (x:xs) = case f x of
     Just a  -> a:filterWith f xs
     _       -> filterWith f xs
@@ -46,14 +47,24 @@ combineWith l f c = map collect [0..length l - 1]
         combined = map fed $ matchAll l
         fed (a,b,i,j) = (f a b,i,j)
 
--- TODO Test
 instance Evolve FourNeural where
-    rank n = zipWith conv n $ combineWith n (\a b -> won $ get $ last $ makeGame False (getN a) (getN b) (FWR start)) combine
+    rank n = zipWith conv n $
+        combineWith n twoGames combine
         where
+            twoGames a b = (winner $ makeGame False (getN a) (getN b) (FWR start),winner $ makeGame False (getN b) (getN a) (FWR start))
+            winner = won . get . last
             conv r (Sum i) = (r,fromInteger i)
-            combine (Just P1) b = if b then Sum 100 else Sum (-100)
-            combine (Just P2) b = if b then Sum (-100) else Sum 100
-            combine _ _ = Sum 0
+            combine (Nothing,Nothing) _ = Sum 0
+            combine (Just a, Just b) c
+                | a==b      = Sum 0
+                | a == P1   = if c then Sum 100 else Sum (-100)
+                | otherwise = if c then Sum (-100) else Sum 100
+            combine (Nothing, Just a) b
+                | a==P1     = if b then Sum (-50) else Sum 50
+                | otherwise = if b then Sum 50 else Sum (-50)
+            combine (Just a, Nothing) b
+                | a==P1     = if b then Sum 50 else Sum (-50)
+                | otherwise = if b then Sum (-50) else Sum 50
     mutate (FP x) = do
         mutated <- mapM mutateMatr x
         return $ FP mutated
