@@ -14,7 +14,7 @@ data Field = Pl Player | Empty deriving (Eq,Show)
 
 type FW = [[Field]]
 
-newtype FWR = FWR FW
+newtype FWR = FWR FW deriving Show
 
 instance Game FWR where
     next p (FWR a) = map FWR $ possibleMoves p a
@@ -96,7 +96,7 @@ computeH :: NN -> FW -> Double
 computeH n = head . toVect . evalNN Linear n . toNNInput
 
 computeMove :: NN -> FWR -> FWR
-computeMove n f = maxPlay (computeH n . get) P1 2 f!!1
+computeMove n f = alphaBeta 3 (computeH n . get) f!!1
     where
         get (FWR a) = a
 

@@ -3,6 +3,7 @@
 module Test where
 
 import           Four
+import           Game
 import           Rand
 import           Util (drawDiagram, drawMatrix, randomNN, toMatrix)
 
