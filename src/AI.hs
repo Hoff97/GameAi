@@ -23,4 +23,8 @@ instance Evolve FourNeural where
             mutateCon y = do
                 d <- getR :: Rand Double
                 return $ y+d
-    combine (FP a) (FP b) = return $ FP a --FIXME
+    combine (FP a) (FP b) = return $ FP $ zipWith matrixes a b
+        where
+            matrixes = zipWith lines
+            lines = zipWith fields
+            fields a b = (a+b)/2
