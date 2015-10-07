@@ -12,6 +12,8 @@ import           Game
 import           Rand
 import           Util          (drawDiagram, drawMatrix, randomNN, toMatrix)
 
+--TODO: Evolve some Four playing NN's, make some test games against them
+--TODO: GUI for evolving/playing
 test2 :: IO ()
 test2 = do
     a <- replicateM 10 $ runRandIO $ randomNN [48,20,1]
