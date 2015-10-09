@@ -18,6 +18,7 @@ newtype FWR = FWR FW deriving Show
 
 instance Game FWR where
     next p (FWR a) = map FWR $ possibleMoves p a
+    end = gameEnd
 
 get :: FWR -> FW
 get (FWR r) = r

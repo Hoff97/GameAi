@@ -3,24 +3,50 @@
 module Test where
 
 import           AI
-import           Control.Monad (replicateM)
+import           Control.Monad (replicateM, unless)
 import           Data.List     (maximumBy, minimumBy)
 import           Data.Ord      (comparing)
 import           Evolve
 import           Four
 import           Game
+import           Neural
 import           Rand
+import           Safe          (readMay)
 import           Util          (drawDiagram, drawMatrix, randomNN, toMatrix)
 
 --TODO: Evolve some Four playing NN's, make some test games against them
 --TODO: GUI for evolving/playing
-test2 :: IO ()
-test2 = do
-    a <- replicateM 10 $ runRandIO $ randomNN [48,20,1]
-    let b = map FP a
-    res <- runRandIO $ evolution 30 b
-    print $ map snd $ rank res
-    putStrLn "Drawn 1"
 
 draw :: FW -> IO ()
 draw a = drawDiagram 400 400 $ toDiag a
+
+readLnConstrained :: Read a => (a -> Bool) -> IO a
+readLnConstrained c = do
+    i <- getLine
+    case readMay i of
+        Just a  -> if c a then return a else readLnConstrained c
+        _       -> readLnConstrained c
+
+playTest :: IO ()
+playTest = do
+    FP nn <- runRandIO randomFourNeural
+    play (computeMove nn) (FWR start)
+
+play :: (FWR -> FWR) -> FWR -> IO ()
+play comp p@(FWR pos) = do
+    putStrLn "Drawing current position..."
+    draw pos
+    let pM = possibleMoves P2 pos
+    unless (null pM) $ do
+        putStrLn "Drawn. Please make your move"
+        putStrLn $ "Input a number from 0 to " ++ show (length pM - 1)
+        n <- readLnConstrained (\x -> x>=0 && x<length pM)
+        putStrLn "Drawing your move"
+        let nextPos = pM!!n
+        draw nextPos
+        unless(gameEnd $ FWR nextPos) $ do
+            _ <- getLine
+            putStrLn "Computer is thinking, please wait"
+            let n = comp (FWR nextPos)
+            print "Computer moved"
+            play comp n

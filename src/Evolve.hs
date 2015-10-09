@@ -15,15 +15,11 @@ class Evolve a where
 evolution :: (Show a, Evolve a) => Int -> [a] -> Rand [a]
 evolution 0 a = return a
 evolution i a = do
-    trace (show i ++ " generations left. Taking Parents") (return ())
+    trace (show i ++ " generations left.") (return ())
     parents <- takeRandom a (length a `div` 2)
-    trace "Generating Kids" (return ())
     kids <- mapM (uncurry combine) $ pair parents
-    trace "Mutating Individuals" (return ())
     mutated <- mapM mutate (kids++a)
-    trace "Ranking" (return ())
     let ranked = rank mutated
-    trace "Selecting" (return ())
     selected <- replicateM (length a) $ select ranked
     evolution (i-1) selected
 
