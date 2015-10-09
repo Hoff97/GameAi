@@ -59,7 +59,7 @@ instance Evolve FourNeural where
     rank n = zipWith conv n $
         combineWith n twoGames combine
         where
-            twoGames a b = (winner $ makeGame False (getN a) (getN b) (FWR start),winner $ makeGame False (getN b) (getN a) (FWR start))
+            twoGames a b = (winner $ makeGame False (computeMove $ getN a) (computeMove $ getN b) (FWR start),winner $ makeGame False (computeMove $ getN b) (computeMove $ getN a) (FWR start))
             winner = won . get . last
             conv r (Sum i) = (r,fromInteger i)
             combine (Nothing,Nothing) _ = Sum 0

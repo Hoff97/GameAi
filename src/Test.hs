@@ -12,6 +12,7 @@ import           Game
 import           Neural
 import           Rand
 import           Safe          (readMay)
+import           Test2
 import           Util          (drawDiagram, drawMatrix, randomNN, toMatrix)
 
 --TODO: Evolve some Four playing NN's, make some test games against them
@@ -48,5 +49,16 @@ play comp p@(FWR pos) = do
             _ <- getLine
             putStrLn "Computer is thinking, please wait"
             let n = comp (FWR nextPos)
-            print "Computer moved"
+            putStrLn "Computer moved"
             play comp n
+
+playAgainst = do
+    let g = makeGame False player2 player1 (FWR start)
+    let m = map (map toDiag) $ toMatrix (map get g)
+    let diagram = drawMatrix m
+    putStrLn "Computing, drawing..."
+    drawDiagram 10000 10000 $ drawMatrix m
+    putStrLn "Finished"
+    where
+        player1 = (!!1) . alphaBeta 6 (heuristic . get)
+        player2 = (!!1) . alphaBeta 6 (heuristic . get)
