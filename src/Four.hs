@@ -47,9 +47,9 @@ toDiag :: FW -> Diagram B
 toDiag = foldl (===) mempty . map drawLine . reverse
     where
         drawLine = foldl (|||) mempty . map drawSquare
-        drawSquare (Pl P1) = square 1 # lineWidth 30 <> circle 0.5 # lineWidth 0 # fillColor yellow # scale 0.9
-        drawSquare (Pl P2) = square 1 # lineWidth 30 <> circle 0.5 # lineWidth 0 # fillColor red # scale 0.9
-        drawSquare _ = square 1 # lineWidth 30
+        drawSquare (Pl P1) = square 1 # lineWidth 3 <> circle 0.5 # lineWidth 0 # fillColor yellow # scale 0.9
+        drawSquare (Pl P2) = square 1 # lineWidth 3 <> circle 0.5 # lineWidth 0 # fillColor red # scale 0.9
+        drawSquare _ = square 1 # lineWidth 3
 
 possibleMoves :: Player -> FW -> [FW]
 possibleMoves p f = foldl moveAt [] [0..6]

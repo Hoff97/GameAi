@@ -29,9 +29,7 @@ readLnConstrained c = do
         _       -> readLnConstrained c
 
 playTest :: IO ()
-playTest = do
-    FP nn <- runRandIO randomFourNeural
-    play (computeMove nn) (FWR start)
+playTest = play ((!!1) . alphaBeta 6 (heuristic 20 . get)) (FWR start)
 
 play :: (FWR -> FWR) -> FWR -> IO ()
 play comp p@(FWR pos) = do
@@ -53,12 +51,12 @@ play comp p@(FWR pos) = do
             play comp n
 
 playAgainst = do
-    let g = makeGame False player2 player1 (FWR start)
+    let g = makeGame False player1 player2 (FWR start)
     let m = map (map toDiag) $ toMatrix (map get g)
     let diagram = drawMatrix m
     putStrLn "Computing, drawing..."
     drawDiagram 10000 10000 $ drawMatrix m
     putStrLn "Finished"
     where
-        player1 = (!!1) . alphaBeta 6 (heuristic . get)
-        player2 = (!!1) . alphaBeta 6 (heuristic . get)
+        player1 = (!!1) . alphaBeta 2 (heuristic 20 . get)
+        player2 = (!!1) . alphaBeta 2 (heuristic 20 . get)

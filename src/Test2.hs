@@ -11,12 +11,12 @@ loose = -win
 allSubs :: FW -> [[Field]]
 allSubs x = x ++ columns x ++ diagonals x
 
-heuristic :: FW -> Double
-heuristic x = case won x of
+heuristic :: Double -> FW -> Double
+heuristic m x = case won x of
     Just p  -> if p == P1 then win else loose
     _       -> if all (notElem Empty) x
         then 0
-        else cols+20*threeM
+        else cols+m*threeM
             where
                 threes = allSubs x >>= subs 3
                 threeM = fromIntegral $ length (filter (all (==Pl P1)) threes) - length (filter (all (==Pl P2)) threes)
@@ -26,4 +26,4 @@ heuristic x = case won x of
                 fieldVal (Pl P2) = -1
                 fieldVal _ = 0
 
-test x = alphaBeta x (heuristic . get) (FWR start) !! 1
+test x = alphaBeta x (heuristic 20 . get) (FWR start) !! 1
