@@ -26,4 +26,4 @@ heuristic m x = case won x of
                 fieldVal (Pl P2) = -1
                 fieldVal _ = 0
 
-test x = alphaBeta x (heuristic 20 . get) (FWR start) !! 1
+test x = alphaBeta x (heuristic 20 . get) (FWR start)

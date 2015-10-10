@@ -1,6 +1,6 @@
 {-# LANGUAGE RankNTypes #-}
 
-module Test where
+module Tests.Test1 where
 
 import           AI
 import           Control.Monad (replicateM, unless)
@@ -29,14 +29,14 @@ readLnConstrained c = do
         _       -> readLnConstrained c
 
 playTest :: IO ()
-playTest = play ((!!1) . alphaBeta 6 (heuristic 20 . get)) (FWR start)
+playTest = play ((!!1) . alphaBeta 8 (heuristic 20 . get)) (FWR start)
 
 play :: (FWR -> FWR) -> FWR -> IO ()
 play comp p@(FWR pos) = do
     putStrLn "Drawing current position..."
     draw pos
     let pM = possibleMoves P2 pos
-    unless (null pM) $ do
+    unless (null pM || end p) $ do
         putStrLn "Drawn. Please make your move"
         putStrLn $ "Input a number from 0 to " ++ show (length pM - 1)
         n <- readLnConstrained (\x -> x>=0 && x<length pM)

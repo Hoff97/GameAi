@@ -2,5 +2,7 @@
 
 module Main where
 
+import           Tests.Test1
+
 main :: IO ()
-main = putStrLn "Hi"
+main = playTest
