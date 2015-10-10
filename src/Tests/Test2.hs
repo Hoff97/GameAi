@@ -1,4 +1,4 @@
-module Test2 where
+module Tests.Test2 where
 
 import           Control.Applicative ((<$>))
 import           Four

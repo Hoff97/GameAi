@@ -12,7 +12,7 @@ import           Game
 import           Neural
 import           Rand
 import           Safe          (readMay)
-import           Test2
+import           Tests.Test2
 import           Util          (drawDiagram, drawMatrix, randomNN, toMatrix)
 
 --TODO: Evolve some Four playing NN's, make some test games against them
