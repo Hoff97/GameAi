@@ -5,6 +5,9 @@ import qualified Data.Map            as M
 
 type Memo a b = State (M.Map a b) b
 
+memoizePure :: Ord a => (a -> b) -> a -> Memo a b
+memoizePure f = memoize (return . f)
+
 memoize :: Ord a => (a -> Memo a b) -> a -> Memo a b
 memoize f x = do
     vals <- get
