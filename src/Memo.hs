@@ -1,45 +1,34 @@
 module Memo where
 
 import           Control.Monad.State
+import qualified Data.Map            as M
 
-type Memo a b = State [(a,b)] b
-
-memoize :: Eq a => a -> (a -> b) -> Memo a b
-memoize i f = do
-    vals <- get
-    case lookup i vals of
-        Just res    -> return res
-        _           -> do
-            let res = f i
-            put $ (i,res):vals
-            return res
+type Memo a b = State (M.Map a b) b
 
 col = collatz 0
 
---test2 = memoize
-
 collatz :: Int -> Int -> Int
 collatz c 1 = c
-collatz c x = collatz (c+1) $ coll x
+collatz c x = collatz (c+1) (coll x)
 
 coll :: Int -> Int
 coll x = if even x then x `div` 2 else x*3+1
 
-colTest :: Int -> State [(Int,Int)] Int
+colTest :: Int -> State (M.Map Int Int) Int
 colTest 1 = return 1
 colTest x = do
     vals <- get
-    case lookup x vals of
+    case M.lookup x vals of
         Just res    -> return res
         _           -> do
             rC  <- colTest $ coll x
-            modify ((x,rC+1):)
-            return $ rC+1
+            modify (M.insert x $ rC+1)
+            return $ rC + 1
 
-testRow = mapM colTest [1..10000]
+testRow = mapM colTest [1..1000000]
 
-evCol :: State [(Int,Int)] a -> (a,[(Int,Int)])
-evCol x = runState x []
+evCol :: State (M.Map Int Int) a -> (a,M.Map Int Int)
+evCol x = runState x M.empty
 
-runCol :: State [(Int,Int)] a -> a
-runCol a = evalState a []
+runCol :: State (M.Map Int Int) a -> a
+runCol a = evalState a M.empty
