@@ -3,8 +3,9 @@ module Game where
 import           Control.Monad.State
 import           Data.List           (maximumBy, minimumBy)
 import           Data.Ord            (comparing)
+import           Memo
 
-data Player = P1 | P2 deriving (Eq, Show)
+data Player = P1 | P2 deriving (Eq, Show,Ord)
 
 class Game a where
     next :: Player -> a -> [a]
@@ -16,29 +17,38 @@ maxD = 100000
 first :: (a -> b) -> (a,c) -> (b,c)
 first f (a,b) = (f a,b)
 
-alphaBeta :: Game a => Int -> (a -> Double) -> a -> [a]
-alphaBeta d f a = fst $ minMax a f P1 d minD maxD
+--TODO: Check Implementation + Memoization
 
-minMax :: Game a => a -> (a -> Double) -> Player -> Int -> Double -> Double -> ([a],Double) --TODO: Check for Doubles
-minMax a f _ 0 _ _ = ([a],f a)
+alphaBeta :: (Ord a,Game a) => Int -> (a -> Double) -> a -> [a]
+alphaBeta d f a = fst $ runMemo $ minMax a f P1 d minD maxD
+
+minMaxM :: (Ord a,Game a) => a -> (a -> Double) -> Player -> Int -> Double -> Double -> Memo a ([a],Double)
+minMaxM pos heur player depth alpha beta = memoize (\x -> minMax x heur player depth alpha beta) pos
+
+minMax :: (Ord a,Game a) => a -> (a -> Double) -> Player -> Int -> Double -> Double -> Memo a ([a],Double)
+minMax a f _ 0 _ _ = return ([a],f a)
 minMax a f P1 i alpha beta
-    | end a     = ([a],f a)
-    | otherwise = first (a:) $ abPrune a ([],minD) alpha beta (next P1 a)
+    | end a     = return ([a],f a)
+    | otherwise = do
+        r <- abPrune a ([],minD) alpha beta (next P1 a)
+        return $ first (a:) r
     where
-        abPrune prev s _ _ [] = s
-        abPrune prev r1@(_,h1) a b (x:xs) = if b<alphaNew then maxi else abPrune prev maxi alphaNew b xs
-            where
-                r2@(_,h2) = minMax x f P2 (i-1) a b
-                maxi = if h1>h2 then r1 else r2
-                alphaNew = max a (snd maxi)
+        abPrune prev s _ _ [] = return s
+        abPrune prev r1@(_,h1) a b (x:xs) = do
+            r2@(_,h2) <- minMaxM x f P2 (i-1) a b
+            let maxi = if h1>h2 then r1 else r2
+            let alphaNew = max a (snd maxi)
+            if b<alphaNew then return maxi else abPrune prev maxi alphaNew b xs
 
 minMax a f P2 i alpha beta
-    | end a     = ([a],f a)
-    | otherwise = first (a:) $ abPrune ([],maxD) alpha beta (next P2 a)
+    | end a     = return ([a],f a)
+    | otherwise = do
+        r <- abPrune ([],maxD) alpha beta (next P2 a)
+        return $ first (a:) r
     where
-        abPrune s _ _ [] = s
-        abPrune r1@(_,h1) a b (x:xs) = if betaNew<alpha then mini else abPrune mini a betaNew xs
-            where
-                r2@(_,h2) = minMax x f P1 (i-1) a b
-                mini = if h1<h2 then r1 else r2
-                betaNew = min b (snd mini)
+        abPrune s _ _ [] = return s
+        abPrune r1@(_,h1) a b (x:xs) = do
+            r2@(_,h2) <- minMaxM x f P1 (i-1) a b
+            let mini = if h1<h2 then r1 else r2
+            let betaNew = min b (snd mini)
+            if betaNew<alpha then return mini else abPrune mini a betaNew xs

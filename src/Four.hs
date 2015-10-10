@@ -10,11 +10,11 @@ import           Game
 import           Matrix                       (columns, diagonals, toVect)
 import           Neural
 
-data Field = Pl Player | Empty deriving (Eq,Show)
+data Field = Pl Player | Empty deriving (Eq,Show,Ord)
 
 type FW = [[Field]]
 
-newtype FWR = FWR FW deriving Show
+newtype FWR = FWR FW deriving (Show,Eq,Ord)
 
 instance Game FWR where
     next p (FWR a) = map FWR $ possibleMoves p a
