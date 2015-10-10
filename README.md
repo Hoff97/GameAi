@@ -1,0 +1,2 @@
+# GameAi
+Algorithms for Games
