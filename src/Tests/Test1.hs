@@ -58,5 +58,5 @@ playAgainst = do
     drawDiagram 10000 10000 $ drawMatrix m
     putStrLn "Finished"
     where
-        player1 = (!!1) . alphaBeta 2 (heuristic 20 . get)
-        player2 = (!!1) . alphaBeta 2 (heuristic 20 . get)
+        player1 = (!!1) . alphaBeta 8 (heuristic 20 . get)
+        player2 = (!!1) . alphaBeta 8 (heuristic 20 . get)

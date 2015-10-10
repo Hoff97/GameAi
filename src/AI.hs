@@ -12,6 +12,7 @@ import           Neural
 import           Rand
 import           Util                (randomNN)
 
+-- |
 newtype FourNeural = FP NN deriving (Show,Read)
 
 fromFile :: String -> IO FourNeural
