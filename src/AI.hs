@@ -45,7 +45,6 @@ filterWith f (x:xs) = case f x of
     Just a  -> a:filterWith f xs
     _       -> filterWith f xs
 
---TODO Prettify
 combineWith :: Monoid c => [a] -> (a -> a -> b) -> (b -> Bool -> c) -> [c]
 combineWith l f c = map collect [0..length l - 1]
     where

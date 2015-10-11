@@ -17,8 +17,6 @@ maxD = 100000
 first :: (a -> b) -> (a,c) -> (b,c)
 first f (a,b) = (f a,b)
 
---TODO: Check Implementation + Memoization
-
 alphaBeta :: (Ord a,Game a) => Int -> (a -> Double) -> a -> [a]
 alphaBeta d f a = fst $ runMemo $ minMax a f P1 d minD maxD
 

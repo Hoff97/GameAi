@@ -12,10 +12,9 @@ class Evolve a where
     combine :: a -> a -> Rand a
 
 
-evolution :: (Show a, Evolve a) => Int -> [a] -> Rand [a]
+evolution :: Evolve a => Int -> [a] -> Rand [a]
 evolution 0 a = return a
 evolution i a = do
-    trace (show i ++ " generations left.") (return ())
     parents <- takeRandom a (length a `div` 2)
     kids <- mapM (uncurry combine) $ pair parents
     mutated <- mapM mutate (kids++a)

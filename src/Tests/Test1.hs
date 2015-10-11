@@ -15,7 +15,6 @@ import           Safe          (readMay)
 import           Tests.Test2
 import           Util          (drawDiagram, drawMatrix, randomNN, toMatrix)
 
---TODO: Evolve some Four playing NN's, make some test games against them
 --TODO: GUI for evolving/playing
 
 draw :: FW -> IO ()
