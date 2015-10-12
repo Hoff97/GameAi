@@ -10,6 +10,8 @@ data Player = P1 | P2 deriving (Eq, Show,Ord)
 class Game a where
     next :: Player -> a -> [a]
     end :: a -> Bool
+    alternative :: a -> [a]
+    alternative _ = []
 
 minD = -100000
 maxD = 100000
@@ -17,11 +19,12 @@ maxD = 100000
 first :: (a -> b) -> (a,c) -> (b,c)
 first f (a,b) = (f a,b)
 
+--TODO: Rewrite for Go
 alphaBeta :: (Ord a,Game a) => Int -> (a -> Double) -> a -> [a]
 alphaBeta d f a = fst $ runMemo $ minMax a f P1 d minD maxD
 
 minMaxM :: (Ord a,Game a) => a -> (a -> Double) -> Player -> Int -> Double -> Double -> Memo a ([a],Double)
-minMaxM pos heur player depth alpha beta = memoize (\x -> minMax x heur player depth alpha beta) pos
+minMaxM pos heur player depth alpha beta = memoizeAlt (\x -> minMax x heur player depth alpha beta) alternative pos
 
 minMax :: (Ord a,Game a) => a -> (a -> Double) -> Player -> Int -> Double -> Double -> Memo a ([a],Double)
 minMax a f _ 0 _ _ = return ([a],f a)

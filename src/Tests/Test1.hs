@@ -12,7 +12,6 @@ import           Game
 import           Neural
 import           Rand
 import           Safe          (readMay)
-import           Tests.Test2
 import           Util          (drawDiagram, drawMatrix, randomNN, toMatrix)
 
 --TODO: GUI for evolving/playing
